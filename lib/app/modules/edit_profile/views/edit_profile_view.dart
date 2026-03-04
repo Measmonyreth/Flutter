@@ -133,6 +133,7 @@ class EditProfileView extends GetView<EditProfileController> {
                 ),
               ],
             ),
+            SizedBox(height: 30),
             Form(
               key: _formKey,
               child: Column(
@@ -208,6 +209,7 @@ class EditProfileView extends GetView<EditProfileController> {
                             image: controller.profileImg,
                           );
                         }
+                        //  controller.loadingUser.refresh();
                       },
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 14),

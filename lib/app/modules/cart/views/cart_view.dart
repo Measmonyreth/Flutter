@@ -1,12 +1,15 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ecommerce_flutter/app/data/model/cart.rest.model.dart';
 import 'package:ecommerce_flutter/app/modules/cart/controllers/cart_controller.dart';
+import 'package:ecommerce_flutter/app/modules/widget/qtybutton.dart';
+import 'package:ecommerce_flutter/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
 
 class CartView extends GetView<CartController> {
-  const CartView({super.key});
+  CartView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +85,28 @@ class CartView extends GetView<CartController> {
                 itemCount: items.length,
                 itemBuilder: (context, index) {
                   final item = items[index];
-                  return _CartItemCard(item: item, theme: theme);
+                  return Slidable(
+                    child: _CartItemCard(
+                      item: item,
+                      theme: theme,
+                      controller: controller,
+                    ),
+                    endActionPane: ActionPane(
+                      motion: const ScrollMotion(),
+                      children: [
+                        SlidableAction(
+                          onPressed: (context) {
+                            controller.removeFromCart(
+                              productId: item.product?.id ?? 0,
+                            );
+                          },
+                          backgroundColor: Colors.red,
+                          foregroundColor: Colors.white,
+                          icon: Icons.delete,
+                        ),
+                      ],
+                    ),
+                  );
                 },
               ),
 
@@ -103,11 +127,15 @@ class CartView extends GetView<CartController> {
 
 // ── Cart Item Card ───────────────────────────────────────────
 class _CartItemCard extends StatelessWidget {
-  const _CartItemCard({required this.item, required this.theme});
+  _CartItemCard({
+    required this.item,
+    required this.theme,
+    required this.controller,
+  });
 
   final Items item;
   final ThemeData theme;
-
+  final CartController controller;
   @override
   Widget build(BuildContext context) {
     final product = item.product;
@@ -163,37 +191,34 @@ class _CartItemCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    product?.name ?? '',
-                    style: const TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w700,
-                      color: Color(0xFF1A1A1A),
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    product?.description ?? '',
-                    style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 10),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      // Unit price
-                      Text(
-                        '\$${double.tryParse(item.price.toString())?.toStringAsFixed(2)}',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: theme.primaryColor,
-                        ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            product?.name ?? '',
+                            style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xFF1A1A1A),
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            product?.description ?? '',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey.shade500,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
                       ),
-                      // Qty badge
+                      const Spacer(),
                       Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 10,
@@ -212,6 +237,57 @@ class _CartItemCard extends StatelessWidget {
                           ),
                         ),
                       ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // Unit price
+                      Text(
+                        '\$${double.tryParse(item.price.toString())?.toStringAsFixed(2)}',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: theme.primaryColor,
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          QtyButton(
+                            icon: Icons.remove,
+                            onTap: () {
+                              if (item.quantity! > 1) {
+                                controller.decrement(item);
+                                // HapticFeedback.selectionClick();
+                              }
+                            },
+                            color: item.quantity! > 1
+                                ? theme.primaryColor
+                                : Colors.grey.shade300,
+                          ),
+                          SizedBox(
+                            width: 40,
+                            child: Text(
+                              '${item.quantity}',
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                fontSize: 17,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          QtyButton(
+                            icon: Icons.add,
+                            onTap: () {
+                              controller.increment(item);
+                              //    HapticFeedback.selectionClick();
+                            },
+                            color: theme.primaryColor,
+                          ),
+                        ],
+                      ),
+                      // Qty badge
                     ],
                   ),
                 ],
@@ -278,9 +354,18 @@ class _CheckoutBar extends StatelessWidget {
 
           // Checkout button
           GestureDetector(
-            onTap: () {
-              HapticFeedback.mediumImpact();
-              // TODO: handle checkout
+            onTap: () async {
+              await Get.toNamed(Routes.CHECKOUT);
+              // CheckOutDialog.show(
+              //   context,
+              //   title: 'Checkout Successful',
+              //   message: 'Your order has been placed successfully.',
+              //   onPressed: () {
+              //     controller.removeFromCart(
+              //       productId: controller.cart.value.carts?.id ?? 0,
+              //     );
+              //   },
+              // );
             },
             child: Container(
               height: 54,

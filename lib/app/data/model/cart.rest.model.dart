@@ -7,9 +7,16 @@ class Cart {
 
   Cart.fromJson(Map<String, dynamic> json) {
     final cartJson = json['carts'] ?? json['cart'];
-    carts = cartJson != null
-        ? Carts.fromJson(Map<String, dynamic>.from(cartJson))
-        : null;
+    if (cartJson == null) {
+      carts = null;
+    } else if (cartJson is Map) {
+      carts = Carts.fromJson(Map<String, dynamic>.from(cartJson));
+    } else if (cartJson is List) {
+      // API may return the items list directly (including an empty list)
+      carts = Carts.fromJson({'items': cartJson});
+    } else {
+      carts = null;
+    }
     final _t = json['total'];
     if (_t == null) {
       total = null;
@@ -74,7 +81,7 @@ class Items {
   int? cartId;
   int? productId;
   int? quantity;
-  String? price;
+  num? price; // Changed from String? to num?
   String? createdAt;
   String? updatedAt;
   Product? product;
@@ -95,25 +102,38 @@ class Items {
     cartId = json['cart_id'];
     productId = json['product_id'];
     quantity = json['quantity'];
-    price = json['price'];
+
+    // Handle price conversion properly
+    final priceValue = json['price'];
+    if (priceValue is int) {
+      price = priceValue.toDouble(); // Convert int to double
+    } else if (priceValue is double) {
+      price = priceValue;
+    } else if (priceValue is String) {
+      price = double.tryParse(priceValue) ?? 0.0;
+    } else {
+      price = 0.0;
+    }
+
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
     product = json['product'] != null
-        ? new Product.fromJson(json['product'])
+        ? Product.fromJson(json['product'])
         : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['cart_id'] = this.cartId;
-    data['product_id'] = this.productId;
-    data['quantity'] = this.quantity;
-    data['price'] = this.price;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
-    if (this.product != null) {
-      data['product'] = this.product!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['cart_id'] = cartId;
+    data['product_id'] = productId;
+    data['quantity'] = quantity;
+    data['price'] = price
+        ?.toString(); // Convert back to string for API if needed
+    data['created_at'] = createdAt;
+    data['updated_at'] = updatedAt;
+    if (product != null) {
+      data['product'] = product!.toJson();
     }
     return data;
   }
@@ -123,7 +143,7 @@ class Product {
   int? id;
   String? name;
   String? description;
-  String? price;
+  num? price;
   String? image;
   bool? isFeatured;
   int? categoryId;
@@ -146,7 +166,17 @@ class Product {
     id = json['id'];
     name = json['name'];
     description = json['description'];
-    price = json['price'];
+    // Handle price conversion properly
+    final priceValue = json['price'];
+    if (priceValue is int) {
+      price = priceValue.toDouble(); // Convert int to double
+    } else if (priceValue is double) {
+      price = priceValue;
+    } else if (priceValue is String) {
+      price = double.tryParse(priceValue) ?? 0.0;
+    } else {
+      price = 0.0;
+    }
     image = json['image'];
     isFeatured = json['is_featured'];
     categoryId = json['category_id'];

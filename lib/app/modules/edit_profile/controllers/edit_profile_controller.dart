@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:ecommerce_flutter/app/data/providers/api_provider.dart';
+import 'package:ecommerce_flutter/app/modules/profile/controllers/profile_controller.dart';
+import 'package:ecommerce_flutter/app/routes/app_pages.dart';
 import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -13,6 +15,8 @@ class EditProfileController extends GetxController {
   File? profileImg;
   final faker = Faker();
   final isLoading = false.obs;
+  final ProfileController profileController = Get.find<ProfileController>();
+  RxSet<int> LoadingUser = <int>{}.obs;
 
   @override
   void onInit() {
@@ -52,9 +56,26 @@ class EditProfileController extends GetxController {
         male: male,
       );
       if (response.statusCode == 200) {
+        await profileController.fetchProfile();
         isLoading.value = false;
-        Get.snackbar("Update Profile", "You have update profile success");
-        Get.back();
+        LoadingUser.add(profileController.userProfile.value.user!.id!);
+
+        Get.dialog(
+          AlertDialog(
+            title: const Text('Success'),
+            content: const Text('Update profile successful'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Get.back(); // close dialog
+
+                  Get.back(); // go to profile page
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
       } else {
         Get.snackbar("Update Profile", "You have update profile failed");
       }

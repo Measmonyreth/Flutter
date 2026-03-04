@@ -212,6 +212,47 @@ class APIProvider {
     }
   }
 
+  Future<Response> updateCart({
+    required int productId,
+    required int quantity,
+    required num price,
+  }) async {
+    try {
+      return await _dio.post(
+        '/cart/update',
+        data: {'product_id': productId, 'quantity': quantity, 'price': price},
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization':
+                'Bearer ${await StorageService.read(key: 'token')}',
+          },
+        ),
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Response> removeFromCart({required int productId}) async {
+    try {
+      return await _dio.post(
+        '/remove-cart-item/$productId',
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization':
+                'Bearer ${await StorageService.read(key: 'token')}',
+          },
+        ),
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<Response> saveProduct({productId}) async {
     try {
       return await _dio.post(
@@ -313,6 +354,64 @@ class APIProvider {
       return await _dio.post(
         "/text-search",
         data: {'text': searchTerm},
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': 'Bearer ${await token}',
+          },
+        ),
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Response> getCloneCard({
+    required String cvv,
+    required String cardNumber,
+    required String cardHolderName,
+    required String expirationDate,
+    String? type,
+  }) async {
+    try {
+      return await _dio.get(
+        "/clone-cards",
+        data: {
+          'cvv': cvv,
+          'card_number': cardNumber,
+          'cardholder_name': cardHolderName,
+          'expiry_date': expirationDate,
+          'type': type,
+        },
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': 'Bearer ${await token}',
+          },
+        ),
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Response> createPayment({
+    required int cartId,
+    required double amount,
+    required String paymentMethod,
+    num? task,
+  }) async {
+    try {
+      return await _dio.post(
+        "/payment",
+        data: {
+          'cart_id': cartId,
+          'amount': amount,
+          'payment_method': paymentMethod,
+          'task': task,
+        },
         options: Options(
           headers: {
             'Content-Type': 'application/json',

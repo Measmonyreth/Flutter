@@ -1,13 +1,14 @@
-import 'package:ecommerce_flutter/app/modules/main/views/home_view.dart';
 import 'package:get/get.dart';
 
 import '../modules/address/add_address/bindings/add_address_binding.dart';
 import '../modules/address/add_address/views/add_address_view.dart';
 import '../modules/address/addresses/bindings/addresses_binding.dart';
-import '../modules/cart/bindings/cart_binding.dart';
-import '../modules/cart/views/cart_view.dart';
 import '../modules/address/edit_address/bindings/edit_address_binding.dart';
 import '../modules/address/edit_address/views/edit_address_view.dart';
+import '../modules/cart/bindings/cart_binding.dart';
+import '../modules/cart/views/cart_view.dart';
+import '../modules/checkout/bindings/checkout_binding.dart';
+import '../modules/checkout/views/checkout_view.dart';
 import '../modules/edit_profile/bindings/edit_profile_binding.dart';
 import '../modules/edit_profile/views/edit_profile_view.dart';
 import '../modules/home/bindings/home_binding.dart';
@@ -15,6 +16,7 @@ import '../modules/home/views/home_view.dart';
 import '../modules/login/bindings/login_binding.dart';
 import '../modules/login/views/login_view.dart';
 import '../modules/main/bindings/home_binding.dart';
+import '../modules/main/views/home_view.dart';
 import '../modules/product-detail/bindings/product_detail_binding.dart';
 import '../modules/product-detail/views/product_detail_view.dart';
 import '../modules/products/bindings/products_binding.dart';
@@ -37,9 +39,7 @@ class AppPages {
 
   static final routes = [
     GetPage(name: _Paths.MAIN, page: () => MainView(), binding: MainBinding()),
-
     GetPage(name: _Paths.HOME, page: () => HomeView(), binding: HomeBinding()),
-
     GetPage(
       name: _Paths.PRODUCTS,
       page: () => const ProductsView(),
@@ -70,11 +70,7 @@ class AppPages {
       page: () => const EditAddressView(),
       binding: EditAddressBinding(),
     ),
-    GetPage(
-      name: _Paths.CART,
-      page: () => const CartView(),
-      binding: CartBinding(),
-    ),
+    GetPage(name: _Paths.CART, page: () => CartView(), binding: CartBinding()),
     GetPage(
       name: _Paths.EDIT_PROFILE,
       page: () => EditProfileView(profileController: Get.arguments),
@@ -99,6 +95,11 @@ class AppPages {
       name: _Paths.SEARCH_PRODUCT,
       page: () => SearchProductView(),
       binding: SearchProductBinding(),
+    ),
+    GetPage(
+      name: _Paths.CHECKOUT,
+      page: () => CheckoutView(),
+      binding: CheckoutBinding(),
     ),
   ];
 }

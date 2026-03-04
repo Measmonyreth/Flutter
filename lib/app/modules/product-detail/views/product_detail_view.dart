@@ -4,6 +4,7 @@ import 'package:ecommerce_flutter/app/modules/home/controllers/home_controller.d
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:ecommerce_flutter/app/modules/widget/qtybutton.dart';
 
 class ProductDetailView extends StatefulWidget {
   const ProductDetailView({super.key, required this.product, this.onSave});
@@ -307,7 +308,7 @@ class _ProductDetailViewState extends State<ProductDetailView>
                               ),
                               Row(
                                 children: [
-                                  _QtyButton(
+                                  QtyButton(
                                     icon: Icons.remove,
                                     onTap: () {
                                       if (_quantity > 1) {
@@ -330,7 +331,7 @@ class _ProductDetailViewState extends State<ProductDetailView>
                                       ),
                                     ),
                                   ),
-                                  _QtyButton(
+                                  QtyButton(
                                     icon: Icons.add,
                                     onTap: () {
                                       setState(() => _quantity++);
@@ -514,31 +515,3 @@ class _ProductDetailViewState extends State<ProductDetailView>
 }
 
 // ── Helper Widget ───────────────────────────────────────────
-class _QtyButton extends StatelessWidget {
-  const _QtyButton({
-    required this.icon,
-    required this.onTap,
-    required this.color,
-  });
-
-  final IconData icon;
-  final VoidCallback onTap;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
-        width: 32,
-        height: 32,
-        decoration: BoxDecoration(
-          color: color.withOpacity(0.12),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Icon(icon, size: 18, color: color),
-      ),
-    );
-  }
-}

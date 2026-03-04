@@ -209,7 +209,7 @@ class ProfileView extends GetView<ProfileController> {
     final cardColor = isDark ? const Color(0xFF1E1E2E) : Colors.white;
 
     final items = [
-      _InfoItem(Icons.badge_outlined, 'User ID', '#${user?.id ?? '—'}'),
+      _InfoItem(Icons.badge_outlined, 'User ID', '${user?.id ?? '—'}'),
       _InfoItem(Icons.person_outline, 'Username', user?.name ?? '—'),
       _InfoItem(Icons.email_outlined, 'Email', user?.email ?? '—'),
       _InfoItem(
