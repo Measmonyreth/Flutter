@@ -189,8 +189,22 @@ class _LoginViewState extends State<LoginView> {
                             }
                           },
                     style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 14,
+                      ),
+                      minimumSize: const Size(double.infinity, 48),
+                      maximumSize: const Size(double.infinity, 48),
+                      elevation: 0,
+                      shadowColor: const Color.fromARGB(0, 15, 15, 15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      backgroundColor: _controller.isLoading.value
+                          ? Colors.blue.shade200
+                          : Colors.blue.shade400,
                     ),
+
                     child: _controller.isLoading.value
                         ? const SizedBox(
                             height: 20,
@@ -199,7 +213,10 @@ class _LoginViewState extends State<LoginView> {
                           )
                         : const Text(
                             'Sign In',
-                            style: TextStyle(fontSize: 16, color: Colors.blue),
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Color.fromARGB(255, 0, 0, 0),
+                            ),
                           ),
                   ),
                 ),
@@ -250,14 +267,25 @@ class _LoginViewState extends State<LoginView> {
                         },
                         icon: const Icon(
                           Icons.g_mobiledata,
-                          color: Colors.blue,
+                          color: Color.fromARGB(255, 0, 0, 0),
                         ),
                         label: const Text(
                           'Google',
-                          style: TextStyle(color: Colors.blue),
+                          style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
                         ),
+
                         style: OutlinedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 12),
+                          minimumSize: const Size(double.infinity, 48),
+                          maximumSize: const Size(double.infinity, 48),
+                          elevation: 0,
+                          shadowColor: const Color.fromARGB(0, 15, 15, 15),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          backgroundColor: _controller.isLoading.value
+                              ? Colors.blue.shade200
+                              : Colors.blue.shade400,
                         ),
                       ),
                     ),
@@ -267,13 +295,26 @@ class _LoginViewState extends State<LoginView> {
                         onPressed: () {
                           _controller.signInWithApple();
                         },
-                        icon: const Icon(Icons.apple, color: Colors.blue),
+                        icon: const Icon(
+                          Icons.apple,
+                          color: Color.fromARGB(255, 0, 0, 0),
+                        ),
                         label: const Text(
                           'Apple',
-                          style: TextStyle(color: Colors.blue),
+                          style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
                         ),
                         style: OutlinedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 12),
+                          minimumSize: const Size(double.infinity, 48),
+                          maximumSize: const Size(double.infinity, 48),
+                          elevation: 0,
+                          shadowColor: const Color.fromARGB(0, 15, 15, 15),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          backgroundColor: _controller.isLoading.value
+                              ? Colors.blue.shade200
+                              : Colors.blue.shade400,
                         ),
                       ),
                     ),

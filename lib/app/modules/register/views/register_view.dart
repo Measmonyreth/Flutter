@@ -232,6 +232,16 @@ class RegisterView extends GetView<RegisterController> {
                           },
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 14),
+                      minimumSize: const Size(double.infinity, 48),
+                      maximumSize: const Size(double.infinity, 48),
+                      elevation: 0,
+                      shadowColor: const Color.fromARGB(0, 15, 15, 15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      backgroundColor: _controller.isLoading.value
+                          ? Colors.blue.shade200
+                          : Colors.blue.shade400,
                     ),
                     child: _controller.isLoading.value
                         ? const SizedBox(
@@ -241,12 +251,31 @@ class RegisterView extends GetView<RegisterController> {
                           )
                         : const Text(
                             'Register',
-                            style: TextStyle(fontSize: 16, color: Colors.blue),
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Color.fromARGB(255, 0, 0, 0),
+                            ),
                           ),
                   ),
                 ),
 
                 const SizedBox(height: 12),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('  Already have an account?'),
+                    // const SizedBox(width: 2),
+                    TextButton(
+                      onPressed: () {
+                        Get.back();
+                      },
+                      child: const Text(
+                        'login',
+                        style: TextStyle(fontSize: 14, color: Colors.blue),
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
