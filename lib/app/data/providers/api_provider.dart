@@ -137,7 +137,7 @@ class APIProvider {
       };
 
       return await _dio.get(
-        '/product-search',
+        '/product-search?search=$search&min_price=${minPrice?.toString()}&max_price=${maxPrice?.toString()}',
         queryParameters: queryParameters,
         options: Options(
           headers: {
