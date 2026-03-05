@@ -17,6 +17,8 @@ import '../modules/login/bindings/login_binding.dart';
 import '../modules/login/views/login_view.dart';
 import '../modules/main/bindings/home_binding.dart';
 import '../modules/main/views/home_view.dart';
+import '../modules/notification/bindings/notification_binding.dart';
+import '../modules/notification/views/notification_view.dart';
 import '../modules/product-detail/bindings/product_detail_binding.dart';
 import '../modules/product-detail/views/product_detail_view.dart';
 import '../modules/products/bindings/products_binding.dart';
@@ -35,7 +37,7 @@ part 'app_routes.dart';
 class AppPages {
   AppPages._();
 
-  static const INITIAL = Routes.LOGIN;
+  static const INITIAL = Routes.MAIN;
 
   static final routes = [
     GetPage(name: _Paths.MAIN, page: () => MainView(), binding: MainBinding()),
@@ -100,6 +102,11 @@ class AppPages {
       name: _Paths.CHECKOUT,
       page: () => CheckoutView(),
       binding: CheckoutBinding(),
+    ),
+    GetPage(
+      name: _Paths.NOTIFICATIONS,
+      page: () => const NotificationView(),
+      binding: NotificationBinding(),
     ),
   ];
 }

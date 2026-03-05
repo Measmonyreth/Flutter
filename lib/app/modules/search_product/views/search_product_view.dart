@@ -19,6 +19,10 @@ class SearchProductView extends GetView<SearchProductController> {
             children: [
               Row(
                 children: [
+                  IconButton(
+                    onPressed: () => Get.back(),
+                    icon: Icon(Icons.arrow_back),
+                  ),
                   Expanded(
                     child: SearchBar(
                       controller: searchController,
@@ -40,6 +44,7 @@ class SearchProductView extends GetView<SearchProductController> {
                           controller.searchProduct(search: value);
                           controller.searchProductsByText(
                             search: searchController.text,
+                            showError: true,
                           );
                         }
                       },
@@ -58,7 +63,7 @@ class SearchProductView extends GetView<SearchProductController> {
                   child: Column(
                     children: [
                       Obx(() {
-                        if (!controller.isSearchLoading.value) {
+                        if (controller.isSearchLoading.value) {
                           return CircularProgressIndicator();
                         }
                         if (controller.hasSearched.value)
@@ -120,9 +125,9 @@ class SearchProductView extends GetView<SearchProductController> {
                                   icon: Icon(Icons.close),
                                   onPressed: () {
                                     controller.hasSearched.value = false;
-                                    // controller.searchProduct();
                                     searchController.clear();
-                                    controller.isSearchLoading.value = true;
+                                    controller.products.clear();
+                                    controller.refreshSearchHistory();
                                   },
                                 ),
                               ],

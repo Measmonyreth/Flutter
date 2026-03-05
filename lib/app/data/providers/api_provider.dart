@@ -63,7 +63,7 @@ class APIProvider {
 
   Future<Response> logout() async {
     try {
-      return await _dio.delete(
+      return await _dio.post(
         "/logout",
         options: Options(
           headers: {
@@ -137,7 +137,7 @@ class APIProvider {
       };
 
       return await _dio.get(
-        '/product-search?search=$search&min_price=${minPrice?.toString()}&max_price=${maxPrice?.toString()}',
+        '/product-search',
         queryParameters: queryParameters,
         options: Options(
           headers: {
@@ -334,13 +334,14 @@ class APIProvider {
 
   Future<Response> getTextSearch() async {
     try {
+      final authToken = await StorageService.read(key: 'token');
       return await _dio.get(
         "/text-searches/user",
         options: Options(
           headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
-            'Authorization': 'Bearer ${await token}',
+            'Authorization': authToken != null ? 'Bearer $authToken' : null,
           },
         ),
       );
@@ -351,6 +352,7 @@ class APIProvider {
 
   Future<Response> createTextSearch({required String searchTerm}) async {
     try {
+      final authToken = await StorageService.read(key: 'token');
       return await _dio.post(
         "/text-search",
         data: {'text': searchTerm},
@@ -358,7 +360,7 @@ class APIProvider {
           headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
-            'Authorization': 'Bearer ${await token}',
+            'Authorization': authToken != null ? 'Bearer $authToken' : null,
           },
         ),
       );
@@ -417,6 +419,39 @@ class APIProvider {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
             'Authorization': 'Bearer ${await token}',
+          },
+        ),
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Response> getNotificationsUserSeen() async {
+    try {
+      return await _dio.get(
+        "/user-notifications",
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': 'Bearer ${await token}',
+          },
+        ),
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Response> getGeneralNotifications() async {
+    try {
+      return await _dio.get(
+        "/notification-generals",
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
           },
         ),
       );

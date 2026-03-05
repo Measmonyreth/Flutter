@@ -13,15 +13,14 @@ class ProfileController extends GetxController {
   Rx<SaveResponse> savedProducts = SaveResponse().obs;
   RxList<Products> savedProductsList = <Products>[].obs;
 
-
   @override
   void onInit() {
     super.onInit();
-    fetchProfile();
-    getSavedProducts();
+    fetchProfile(showError: false);
+    getSavedProducts(showError: false);
   }
 
-  Future<void> fetchProfile() async {
+  Future<void> fetchProfile({bool showError = true}) async {
     try {
       isLoading.value = true;
       final response = await _apiProvider.getProfile();
@@ -31,13 +30,34 @@ class ProfileController extends GetxController {
         Map<String, dynamic> data = Map<String, dynamic>.from(response.data);
         userProfile.value = UserResponse.fromJson(data);
       } else {
-        Get.defaultDialog(
-          title: "Error",
-          content: Text("Failed to fetch profile"),
-        );
+        if (showError) {
+          Get.defaultDialog(
+            title: "Error",
+            content: Text("Failed to fetch profile"),
+          );
+        }
       }
       print(response.statusCode);
       print(response.data);
+    } catch (e) {
+      if (showError) {
+        Get.defaultDialog(title: "Error", content: Text(e.toString()));
+      }
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> logout() async {
+    try {
+      isLoading.value = true;
+      final response = await _apiProvider.logout();
+      if (response.statusCode == 200) {
+        // Clear any stored user data or tokens here if needed
+        Get.offAllNamed('/login'); // Navigate to login screen
+      } else {
+        Get.defaultDialog(title: "Error", content: Text("Failed to logout"));
+      }
     } catch (e) {
       Get.defaultDialog(title: "Error", content: Text(e.toString()));
     } finally {
@@ -45,7 +65,7 @@ class ProfileController extends GetxController {
     }
   }
 
-  Future<void> getSavedProducts() async {
+  Future<void> getSavedProducts({bool showError = true}) async {
     try {
       isLoading.value = true;
       final response = await _apiProvider.getSavedProducts();
@@ -67,13 +87,17 @@ class ProfileController extends GetxController {
         print("Saved products: ${response.data}");
         print('Count: ${savedProductsList.value.length}');
       } else {
-        Get.defaultDialog(
-          title: "Error",
-          content: Text("Failed to fetch saved products"),
-        );
+        if (showError) {
+          Get.defaultDialog(
+            title: "Error",
+            content: Text("Failed to fetch saved products"),
+          );
+        }
       }
     } catch (e) {
-      Get.defaultDialog(title: "Error", content: Text(e.toString()));
+      if (showError) {
+        Get.defaultDialog(title: "Error", content: Text(e.toString()));
+      }
     } finally {
       isLoading.value = false;
     }

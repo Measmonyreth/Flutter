@@ -518,7 +518,7 @@ class ProfileView extends GetView<ProfileController> {
         ),
         icon: const Icon(Icons.logout),
         label: const Text(
-          'Log Out',
+          'Logout',
           style: TextStyle(fontWeight: FontWeight.w600),
         ),
         onPressed: () => _confirmLogout(),
@@ -608,9 +608,8 @@ class ProfileView extends GetView<ProfileController> {
           TextButton(onPressed: () => Get.back(), child: const Text('Cancel')),
           TextButton(
             onPressed: () {
-              Get.back();
-              // controller.logout();
-              Get.snackbar('Logged out', 'See you soon!');
+              controller.logout();
+              // Get.back();
             },
             child: const Text(
               'Log Out',

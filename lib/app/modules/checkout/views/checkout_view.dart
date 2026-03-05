@@ -66,441 +66,457 @@ class CheckoutView extends GetView<CheckoutController> {
           ),
           centerTitle: true,
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+        body: Obx(() {
+          if (cartController.isLoading.value) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Order summery', style: TextStyle(fontSize: 20)),
-                  SizedBox(height: 20),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            Text("Order:"),
-                            Spacer(),
-                            Text("${user.total} \$" ?? 'N/A'),
-                          ],
-                        ),
-                        SizedBox(height: 10),
-                        Row(
-                          children: [
-                            Text("Tax:"),
-                            Spacer(),
-                            Text("${controller.tax} \$"),
-                          ],
-                        ),
-                        SizedBox(height: 10),
-                        Row(
-                          children: [
-                            Text("Total:"),
-                            Spacer(),
-                            Text("${total} \$" ?? 'N/A'),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
+          final user = cartController.cart.value;
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
 
-              const Text(
-                'Payment methods',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-              ),
-              const SizedBox(height: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
 
-              // MasterCard
-              GestureDetector(
-                onTap: () {
-                  _selectedCard.value = 0;
-                  controller.getCard(
-                    cvv: cvvController.text,
-                    cardNumber: cardNumberController.text,
-                    cardHolderName: cardHolderController.text,
-                    expirationDate: expirationDateController.text,
-                    type: "master_card",
-                  );
-                },
-                child: Container(
-                  margin: const EdgeInsets.only(bottom: 12),
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: _selectedCard.value == 0
-                          ? Colors.orange
-                          : Colors.grey[200]!,
-                      width: _selectedCard.value == 0 ? 2 : 1,
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      // Card Icon
-                      Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: Colors.orange.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: const Icon(
-                          Icons.credit_card,
-                          color: Colors.orange,
-                          size: 24,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-
-                      // Card Details
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'MasterCard',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              'Credit card',
-                              style: TextStyle(
-                                fontSize: 13,
-                                color: Colors.grey[600],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      // Card Number
-                      const Text(
-                        '5105******0505',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          letterSpacing: 0.5,
-                        ),
-                      ),
-
-                      // Radio Button
-                      const SizedBox(width: 8),
-                      Container(
-                        width: 20,
-                        height: 20,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: _selectedCard.value == 0
-                                ? Colors.orange
-                                : Colors.grey[400]!,
-                            width: 2,
-                          ),
-                        ),
-                        child: _selectedCard.value == 0
-                            ? Padding(
-                                padding: const EdgeInsets.all(3),
-                                child: Container(
-                                  decoration: const BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Colors.orange,
-                                  ),
-                                ),
-                              )
-                            : null,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              if (_selectedCard.value == 0)
-                // field input such as card number, card holder name, expiration date, CVV for MasterCard
+              children: [
                 Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    TextField(
-                      decoration: InputDecoration(
-                        labelText: 'Card Number',
-                        border: OutlineInputBorder(),
-                      ),
-                      controller: cardNumberController,
-                    ),
-                    SizedBox(height: 10),
-                    TextField(
-                      decoration: InputDecoration(
-                        labelText: 'Card Holder Name',
-                        border: OutlineInputBorder(),
-                      ),
-                      controller: cardHolderController,
-                    ),
-                    SizedBox(height: 10),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            controller: expirationDateController,
-                            decoration: InputDecoration(
-                              labelText: 'Expiration Date',
-                              border: OutlineInputBorder(),
-                            ),
+                    Text('Order summery', style: TextStyle(fontSize: 20)),
+                    SizedBox(height: 20),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              Text("Order:"),
+                              Spacer(),
+                              Text("${user.total} \$" ?? 'N/A'),
+                            ],
                           ),
-                        ),
-                        SizedBox(width: 10),
-                        Expanded(
-                          child: TextField(
-                            controller: cvvController,
-                            decoration: InputDecoration(
-                              labelText: 'CVV',
-                              border: OutlineInputBorder(),
-                            ),
+                          SizedBox(height: 10),
+                          Row(
+                            children: [
+                              Text("Tax:"),
+                              Spacer(),
+                              Text("${controller.tax} \$"),
+                            ],
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
-                )
-              else
-                Container(), // empty container when VISA is selected
-              // VISA
-              GestureDetector(
-                onTap: () {
-                  _selectedCard.value = 1;
-                  controller.getCard(
-                    cvv: cvvController.text,
-                    cardNumber: cardNumberController.text,
-                    cardHolderName: cardHolderController.text,
-                    expirationDate: expirationDateController.text,
-                    type: "visa",
-                  );
-                },
-                child: Container(
-                  margin: const EdgeInsets.only(bottom: 12),
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: _selectedCard.value == 1
-                          ? Colors.blue
-                          : Colors.grey[200]!,
-                      width: _selectedCard.value == 1 ? 2 : 1,
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      // Card Icon
-                      Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: Colors.blue.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: const Icon(
-                          Icons.credit_card,
-                          color: Colors.blue,
-                          size: 24,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-
-                      // Card Details
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'VISA',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              'Debit card',
-                              style: TextStyle(
-                                fontSize: 13,
-                                color: Colors.grey[600],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      // Card Number
-                      const Text(
-                        '3566******0505',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          letterSpacing: 0.5,
-                        ),
-                      ),
-
-                      // Radio Button
-                      const SizedBox(width: 8),
-                      Container(
-                        width: 20,
-                        height: 20,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: _selectedCard.value == 1
-                                ? Colors.blue
-                                : Colors.grey[400]!,
-                            width: 2,
+                          SizedBox(height: 10),
+                          Row(
+                            children: [
+                              Text("Total:"),
+                              Spacer(),
+                              Text("${total} \$" ?? 'N/A'),
+                            ],
                           ),
-                        ),
-                        child: _selectedCard.value == 1
-                            ? Padding(
-                                padding: const EdgeInsets.all(3),
-                                child: Container(
-                                  decoration: const BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Colors.blue,
-                                  ),
-                                ),
-                              )
-                            : null,
+                        ],
                       ),
-                    ],
-                  ),
-                ),
-              ),
-              if (_selectedCard.value == 1)
-                // field input such as card number, card holder name, expiration date, CVV for MasterCard
-                Column(
-                  children: [
-                    TextField(
-                      controller: cardNumberController,
-                      decoration: InputDecoration(
-                        labelText: 'Card Number',
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    TextField(
-                      controller: cardHolderController,
-                      decoration: InputDecoration(
-                        labelText: 'Card Holder Name',
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            controller: expirationDateController,
-                            decoration: InputDecoration(
-                              labelText: 'Expiration Date',
-                              border: OutlineInputBorder(),
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 10),
-                        Expanded(
-                          child: TextField(
-                            controller: cvvController,
-                            decoration: InputDecoration(
-                              labelText: 'CVV',
-                              border: OutlineInputBorder(),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                )
-              else
-                Container(),
-
-              const SizedBox(height: 16),
-
-              // Save card details checkbox
-              GestureDetector(
-                onTap: () {
-                  // Just for UI demonstration
-                },
-                child: Row(
-                  children: [
-                    Container(
-                      width: 22,
-                      height: 22,
-                      decoration: BoxDecoration(
-                        color: _selectedCard.value == 0
-                            ? Colors.orange
-                            : Colors.blue,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: const Icon(
-                        Icons.check,
-                        color: Colors.white,
-                        size: 16,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    const Text(
-                      'Save card details for future payments',
-                      style: TextStyle(fontSize: 14, color: Colors.black87),
                     ),
                   ],
                 ),
-              ),
+                const SizedBox(height: 16),
 
-              const Spacer(),
-              Obx(() {
-                return ElevatedButton(
-                  onPressed: () {
-                    // Just for UI demonstration
-                    final parsedAmount = double.tryParse(
-                      controller.cloneCard.value.data?.amount ?? '',
-                    );
-                    final amountToUse = parsedAmount ?? (user.total ?? 0.0);
-                    controller.createPayment(
-                      cartId: user.carts?.id ?? 0,
-                      amount: amountToUse,
-                      paymentMethod: _selectedCard.value == 0
-                          ? 'master_card'
-                          : 'visa',
+                const Text(
+                  'Payment methods',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 16),
+
+                // MasterCard
+                GestureDetector(
+                  onTap: () {
+                    _selectedCard.value = 0;
+                    controller.getCard(
+                      cvv: cvvController.text,
+                      cardNumber: cardNumberController.text,
+                      cardHolderName: cardHolderController.text,
+                      expirationDate: expirationDateController.text,
+                      type: "master_card",
                     );
                   },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: _selectedCard == 0
-                        ? Colors.orange
-                        : Colors.blue, // Match selected card color
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 40,
-                      vertical: 14,
+                  child: Container(
+                    margin: const EdgeInsets.only(bottom: 12),
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: _selectedCard.value == 0
+                            ? Colors.orange
+                            : Colors.grey[200]!,
+                        width: _selectedCard.value == 0 ? 2 : 1,
+                      ),
                     ),
+                    child: Row(
+                      children: [
+                        // Card Icon
+                        Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: Colors.orange.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: const Icon(
+                            Icons.credit_card,
+                            color: Colors.orange,
+                            size: 24,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
 
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                        // Card Details
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'MasterCard',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                'Credit card',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        // Card Number
+                        Text(
+                          // get card number from cloneCard or get text from cardNumberController
+                          controller.cloneCard.value.data?.cardNumber != null
+                              ? '**** **** **** ${controller.cloneCard.value.data!.cardNumber!.substring(controller.cloneCard.value.data!.cardNumber!.length - 4)}'
+                              : cardNumberController.text.isNotEmpty
+                              ? '**** **** **** ${cardNumberController.text.substring(cardNumberController.text.length - 4)}'
+                              : '**** **** **** 1234',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+
+                        // Radio Button
+                        const SizedBox(width: 8),
+                        Container(
+                          width: 20,
+                          height: 20,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: _selectedCard.value == 0
+                                  ? Colors.orange
+                                  : Colors.grey[400]!,
+                              width: 2,
+                            ),
+                          ),
+                          child: _selectedCard.value == 0
+                              ? Padding(
+                                  padding: const EdgeInsets.all(3),
+                                  child: Container(
+                                    decoration: const BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Colors.orange,
+                                    ),
+                                  ),
+                                )
+                              : null,
+                        ),
+                      ],
                     ),
-                    maximumSize: const Size(double.infinity, 50),
-                    minimumSize: const Size(double.infinity, 50),
-                    elevation: 0,
-                    shadowColor: Colors.transparent,
                   ),
-                  child: const Text(
-                    'Pay Now',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 16),
+                if (_selectedCard.value == 0)
+                  // field input such as card number, card holder name, expiration date, CVV for MasterCard
+                  Column(
+                    children: [
+                      TextField(
+                        decoration: InputDecoration(
+                          labelText: 'Card Number',
+                          border: OutlineInputBorder(),
+                        ),
+                        controller: cardNumberController,
+                      ),
+                      SizedBox(height: 10),
+                      TextField(
+                        decoration: InputDecoration(
+                          labelText: 'Card Holder Name',
+                          border: OutlineInputBorder(),
+                        ),
+                        controller: cardHolderController,
+                      ),
+                      SizedBox(height: 10),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              controller: expirationDateController,
+                              decoration: InputDecoration(
+                                labelText: 'Expiration Date',
+                                border: OutlineInputBorder(),
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 10),
+                          Expanded(
+                            child: TextField(
+                              controller: cvvController,
+                              decoration: InputDecoration(
+                                labelText: 'CVV',
+                                border: OutlineInputBorder(),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  )
+                else
+                  Container(), // empty container when VISA is selected
+                // VISA
+                GestureDetector(
+                  onTap: () {
+                    _selectedCard.value = 1;
+                    controller.getCard(
+                      cvv: cvvController.text,
+                      cardNumber: cardNumberController.text,
+                      cardHolderName: cardHolderController.text,
+                      expirationDate: expirationDateController.text,
+                      type: "visa",
+                    );
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.only(bottom: 12),
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: _selectedCard.value == 1
+                            ? Colors.blue
+                            : Colors.grey[200]!,
+                        width: _selectedCard.value == 1 ? 2 : 1,
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        // Card Icon
+                        Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: Colors.blue.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: const Icon(
+                            Icons.credit_card,
+                            color: Colors.blue,
+                            size: 24,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+
+                        // Card Details
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'VISA',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                'Debit card',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        // Card Number
+                        const Text(
+                          '3566******0505',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+
+                        // Radio Button
+                        const SizedBox(width: 8),
+                        Container(
+                          width: 20,
+                          height: 20,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: _selectedCard.value == 1
+                                  ? Colors.blue
+                                  : Colors.grey[400]!,
+                              width: 2,
+                            ),
+                          ),
+                          child: _selectedCard.value == 1
+                              ? Padding(
+                                  padding: const EdgeInsets.all(3),
+                                  child: Container(
+                                    decoration: const BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Colors.blue,
+                                    ),
+                                  ),
+                                )
+                              : null,
+                        ),
+                      ],
+                    ),
                   ),
-                );
-              }),
-            ],
-          ),
-        ),
+                ),
+                if (_selectedCard.value == 1)
+                  // field input such as card number, card holder name, expiration date, CVV for MasterCard
+                  Column(
+                    children: [
+                      TextField(
+                        controller: cardNumberController,
+                        decoration: InputDecoration(
+                          labelText: 'Card Number',
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      TextField(
+                        controller: cardHolderController,
+                        decoration: InputDecoration(
+                          labelText: 'Card Holder Name',
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              controller: expirationDateController,
+                              decoration: InputDecoration(
+                                labelText: 'Expiration Date',
+                                border: OutlineInputBorder(),
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 10),
+                          Expanded(
+                            child: TextField(
+                              controller: cvvController,
+                              decoration: InputDecoration(
+                                labelText: 'CVV',
+                                border: OutlineInputBorder(),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  )
+                else
+                  Container(),
+
+                const SizedBox(height: 16),
+
+                // Save card details checkbox
+                GestureDetector(
+                  onTap: () {
+                    // Just for UI demonstration
+                  },
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 22,
+                        height: 22,
+                        decoration: BoxDecoration(
+                          color: _selectedCard.value == 0
+                              ? Colors.orange
+                              : Colors.blue,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: const Icon(
+                          Icons.check,
+                          color: Colors.white,
+                          size: 16,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      const Text(
+                        'Save card details for future payments',
+                        style: TextStyle(fontSize: 14, color: Colors.black87),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 24),
+                Obx(() {
+                  return ElevatedButton(
+                    onPressed: () {
+                      // Just for UI demonstration
+                      final parsedAmount = double.tryParse(
+                        controller.cloneCard.value.data?.amount ?? '',
+                      );
+                      final amountToUse = parsedAmount ?? (user.total ?? 0.0);
+                      controller.createPayment(
+                        cartId: user.carts?.id ?? 0,
+                        amount: amountToUse,
+                        paymentMethod: _selectedCard.value == 0
+                            ? 'master_card'
+                            : 'visa',
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: _selectedCard.value == 0
+                          ? Colors.orange
+                          : Colors.blue, // Match selected card color
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 40,
+                        vertical: 14,
+                      ),
+
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      maximumSize: const Size(double.infinity, 50),
+                      minimumSize: const Size(double.infinity, 50),
+                      elevation: 0,
+                      shadowColor: Colors.transparent,
+                    ),
+                    child: const Text(
+                      'Pay Now',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  );
+                }),
+              ],
+            ),
+          );
+        }),
       );
     });
   }

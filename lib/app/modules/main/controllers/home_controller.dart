@@ -2,6 +2,8 @@ import 'package:ecommerce_flutter/app/modules/cart/bindings/cart_binding.dart';
 import 'package:ecommerce_flutter/app/modules/cart/views/cart_view.dart';
 import 'package:ecommerce_flutter/app/modules/home/bindings/home_binding.dart';
 import 'package:ecommerce_flutter/app/modules/home/views/home_view.dart';
+import 'package:ecommerce_flutter/app/modules/notification/bindings/notification_binding.dart';
+import 'package:ecommerce_flutter/app/modules/notification/views/notification_view.dart';
 import 'package:ecommerce_flutter/app/modules/profile/bindings/profile_binding.dart';
 import 'package:ecommerce_flutter/app/modules/profile/views/profile_view.dart';
 import 'package:ecommerce_flutter/app/modules/search_product/bindings/search_product_binding.dart';
@@ -14,8 +16,8 @@ class MainController extends GetxController {
   //TODO: Implement HomeController
   final pages = <String>[
     Routes.HOME,
-    Routes.SEARCH_PRODUCT,
     Routes.CART,
+    Routes.NOTIFICATIONS,
     Routes.PROFILE,
   ];
   var currentIndex = 0.obs;
@@ -35,19 +37,19 @@ class MainController extends GetxController {
         binding: HomeBinding(),
       );
     }
-    if (settings.name == Routes.SEARCH_PRODUCT) {
-      return GetPageRoute(
-        settings: settings,
-        transition: Transition.fadeIn,
-        page: () => SearchProductView(),
-        binding: SearchProductBinding(),
-      );
-    }
     if (settings.name == Routes.CART) {
       return GetPageRoute(
         settings: settings,
         page: () => CartView(),
         binding: CartBinding(),
+      );
+    }
+    // notifications route
+    if (settings.name == Routes.NOTIFICATIONS) {
+      return GetPageRoute(
+        settings: settings,
+        page: () => NotificationView(),
+        binding: NotificationBinding(),
       );
     }
     if (settings.name == Routes.PROFILE) {

@@ -31,10 +31,14 @@ class MainView extends GetView<MainController> {
           type: BottomNavigationBarType.fixed,
           items: [
             BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-            BottomNavigationBarItem(icon: Icon(Icons.search), label: "Search"),
+
             BottomNavigationBarItem(
               icon: Icon(Icons.shopping_bag_outlined),
               label: "Cart",
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.notifications),
+              label: "Notifications",
             ),
             BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
           ],

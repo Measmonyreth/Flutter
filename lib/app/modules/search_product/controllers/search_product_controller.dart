@@ -18,10 +18,16 @@ class SearchProductController extends GetxController {
 
   @override
   void onInit() {
-    // TODO: implement onInit
-    // searchProduct();
     super.onInit();
-    getTextSearch();
+    _loadSearchHistory();
+  }
+
+  Future<void> _loadSearchHistory() async {
+    await getTextSearch(showError: false);
+  }
+
+  Future<void> refreshSearchHistory() async {
+    await getTextSearch(showError: true);
   }
 
   void searchProduct({
@@ -37,16 +43,18 @@ class SearchProductController extends GetxController {
         maxPrice: maxPrice,
         minPrice: minPrice,
       );
-      if (response.statusCode == 200) {
-        List<dynamic> data = response.data;
+      print("Status Code: ${response.statusCode}");
+      print("Response Data: ${response.data}");
+
+      // Check if response has data (regardless of status code)
+      if (response.data != null) {
+        List<dynamic> data = response.data is List ? response.data : [];
         print("Data: $data");
         if (data.isNotEmpty) {
           products.value = data.map((json) => Products.fromJson(json)).toList();
         } else {
           products.value = [];
         }
-      } else {
-        Get.snackbar('Error', 'Failed to load products');
       }
     } on DioException catch (e) {
       print(e);
@@ -56,41 +64,61 @@ class SearchProductController extends GetxController {
     }
   }
 
-  Future<void> getTextSearch() async {
+  Future<void> getTextSearch({bool showError = true}) async {
     try {
       isSearchLoading.value = true;
       final response = await _provider.getTextSearch();
-      if (response.statusCode == 200) {
-        Map<String, dynamic> data = response.data;
-        searchResults.value = TextSearchResponse.fromJson(data);
+      print("Search History Status: ${response.statusCode}");
+      print("Search History Data: ${response.data}");
+      
+      if (response.data != null) {
+        try {
+          Map<String, dynamic> data = response.data is Map ? Map<String, dynamic>.from(response.data) : {};
+          searchResults.value = TextSearchResponse.fromJson(data);
+        } catch (parseError) {
+          print("Error parsing search history: $parseError");
+          if (showError) {
+            Get.snackbar('Error', 'Failed to parse search results');
+          }
+        }
       } else {
-        Get.snackbar('Error', 'Failed to load search results');
+        if (showError) {
+          Get.snackbar('Not Found', 'No search results found');
+        }
       }
-      print(response.statusCode);
-      print(response.data);
     } catch (e) {
-      print(e);
-      Get.snackbar('Error', e.toString());
+      print("Search History Exception: $e");
+      if (showError) {
+        Get.snackbar('Error', e.toString());
+      }
     } finally {
-      isLoading.value = false;
+      isSearchLoading.value = false;
     }
   }
 
-  Future<void> searchProductsByText({required String search}) async {
+  Future<void> searchProductsByText({
+    required String search,
+    bool showError = false,
+  }) async {
     try {
       searchLoading.value = true;
       final response = await _provider.createTextSearch(searchTerm: search);
-      if (response.statusCode == 200) {
-        // List<dynamic> data = response.data;
-        // products.value = data.map((json) => Products.fromJson(json)).toList();
+      print("Save Search Status: ${response.statusCode}");
+      print("Save Search Response: ${response.data}");
+      
+      // Consider any status code < 400 as success
+      if (response.statusCode != null && response.statusCode! < 400) {
+        print("Search term saved successfully: $search");
       } else {
-        Get.snackbar('Error', 'Failed to load products');
+        if (showError) {
+          Get.snackbar('Error', 'Failed to save search term');
+        }
       }
-      print(response.statusCode);
-      print(response.data);
     } catch (e) {
-      print(e);
-      Get.snackbar('Error', e.toString());
+      print("Save Search Error: $e");
+      if (showError) {
+        Get.snackbar('Error', e.toString());
+      }
     } finally {
       searchLoading.value = false;
     }

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:ecommerce_flutter/app/data/providers/api_provider.dart';
+import 'package:ecommerce_flutter/app/modules/profile/controllers/profile_controller.dart';
 import 'package:ecommerce_flutter/app/modules/services/storage_service.dart';
 import 'package:ecommerce_flutter/app/routes/app_pages.dart';
 import 'package:flutter/widgets.dart';
@@ -11,6 +12,14 @@ class LoginController extends GetxController {
 
   final _provider = Get.find<APIProvider>();
   final RxBool isLoading = false.obs;
+  final ProfileController profileController = Get.put<ProfileController>(
+    ProfileController(),
+  );
+  @override
+  void onInit() {
+    super.onInit();
+    // Check if token exists and navigate to main if it does
+  }
 
   Future<void> login({required String email, required String password}) async {
     isLoading.value = true;
@@ -23,6 +32,8 @@ class LoginController extends GetxController {
         StorageService.write(key: 'user', value: jsonEncode(user));
 
         print('token: $token');
+        await profileController
+            .fetchProfile(); // Fetch profile data after login
         Get.offNamed(Routes.MAIN);
       } else {
         Get.defaultDialog(title: "Error", content: Text("Failed to login"));

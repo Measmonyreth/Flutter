@@ -265,8 +265,11 @@ class _LoginViewState extends State<LoginView> {
                         onPressed: () {
                           _controller.signInWithGoogle();
                         },
+
                         icon: const Icon(
                           Icons.g_mobiledata,
+                          size: 27,
+
                           color: Color.fromARGB(255, 0, 0, 0),
                         ),
                         label: const Text(
@@ -286,6 +289,7 @@ class _LoginViewState extends State<LoginView> {
                           backgroundColor: _controller.isLoading.value
                               ? Colors.blue.shade200
                               : Colors.blue.shade400,
+                          side: BorderSide.none,
                         ),
                       ),
                     ),
@@ -297,6 +301,7 @@ class _LoginViewState extends State<LoginView> {
                         },
                         icon: const Icon(
                           Icons.apple,
+                          size: 22,
                           color: Color.fromARGB(255, 0, 0, 0),
                         ),
                         label: const Text(
@@ -315,6 +320,7 @@ class _LoginViewState extends State<LoginView> {
                           backgroundColor: _controller.isLoading.value
                               ? Colors.blue.shade200
                               : Colors.blue.shade400,
+                          side: BorderSide.none,
                         ),
                       ),
                     ),
