@@ -1,6 +1,7 @@
 import 'package:ecommerce_flutter/app/modules/edit_profile/views/edit_profile_view.dart';
 import 'package:ecommerce_flutter/app/modules/home/controllers/home_controller.dart';
 import 'package:ecommerce_flutter/app/modules/product-detail/views/product_detail_view.dart';
+import 'package:ecommerce_flutter/app/modules/services/storage_service.dart';
 import 'package:ecommerce_flutter/app/modules/widget/saveProductCart.dart';
 import 'package:ecommerce_flutter/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,7 @@ class ProfileView extends GetView<ProfileController> {
   ProfileView({super.key});
   final controller = Get.find<ProfileController>();
   final themeController = Get.find<ThemeController>();
+  final token = StorageService.read(key: 'token');
 
   @override
   Widget build(BuildContext context) {
@@ -35,85 +37,111 @@ class ProfileView extends GetView<ProfileController> {
     final user = controller.userProfile.value.user;
     final isDark = themeController.isDarkMode.value;
 
-    return CustomScrollView(
-      slivers: [
-        // ── Sliver App Bar ──────────────────────────────────────────
-        SliverAppBar(
-          expandedHeight: 220,
-          pinned: true,
-          backgroundColor: isDark
-              ? const Color(0xFF1A1A2E)
-              : theme.colorScheme.primary,
-          actions: [
-            PopupMenuButton<String>(
-              icon: Icon(
-                Icons.more_vert,
-                color: isDark ? Colors.white : theme.colorScheme.onPrimary,
-              ),
-              onSelected: (value) => _handleMenu(value),
-              itemBuilder: (_) => [
-                PopupMenuItem(
-                  value: 'edit',
-                  child: Text('Edit Profile'),
-                  onTap: () {
-                    Get.toNamed(Routes.EDIT_PROFILE, arguments: controller);
-                    // Navigator.push(
-                  },
+    return token == null || token.toString().isEmpty
+        ? Center(
+            child: ElevatedButton(
+              onPressed: () => Get.toNamed(Routes.LOGIN),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: theme.colorScheme.primary,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
                 ),
-                const PopupMenuItem(value: 'logout', child: Text('Log Out')),
-              ],
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: const Text('Login to view profile'),
             ),
-          ],
-          flexibleSpace: FlexibleSpaceBar(
-            background: _buildHeader(theme, user, isDark),
-          ),
-        ),
+          )
+        : CustomScrollView(
+            slivers: [
+              // ── Sliver App Bar ──────────────────────────────────────────
+              SliverAppBar(
+                expandedHeight: 220,
+                pinned: true,
+                backgroundColor: isDark
+                    ? const Color(0xFF1A1A2E)
+                    : theme.colorScheme.primary,
+                actions: [
+                  PopupMenuButton<String>(
+                    icon: Icon(
+                      Icons.more_vert,
+                      color: isDark
+                          ? Colors.white
+                          : theme.colorScheme.onPrimary,
+                    ),
+                    onSelected: (value) => _handleMenu(value),
+                    itemBuilder: (_) => [
+                      PopupMenuItem(
+                        value: 'edit',
+                        child: Text('Edit Profile'),
+                        onTap: () {
+                          Get.toNamed(
+                            Routes.EDIT_PROFILE,
+                            arguments: controller,
+                          );
+                          // Navigator.push(
+                        },
+                      ),
+                      const PopupMenuItem(
+                        value: 'logout',
+                        child: Text('Log Out'),
+                      ),
+                    ],
+                  ),
+                ],
+                flexibleSpace: FlexibleSpaceBar(
+                  background: _buildHeader(theme, user, isDark),
+                ),
+              ),
 
-        // ── Content ─────────────────────────────────────────────────
-        SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Info Card
-                _sectionTitle('Account Information', theme),
-                const SizedBox(height: 8),
-                _buildInfoCard(user, theme, isDark),
+              // ── Content ─────────────────────────────────────────────────
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Info Card
+                      _sectionTitle('Account Information', theme),
+                      const SizedBox(height: 8),
+                      _buildInfoCard(user, theme, isDark),
 
-                const SizedBox(height: 24),
+                      const SizedBox(height: 24),
 
-                // Activity / Stats
-                _sectionTitle('Activity', theme),
-                const SizedBox(height: 8),
-                _buildStatsRow(theme, isDark),
+                      // Activity / Stats
+                      _sectionTitle('Activity', theme),
+                      const SizedBox(height: 8),
+                      _buildStatsRow(theme, isDark),
 
-                const SizedBox(height: 24),
+                      const SizedBox(height: 24),
 
-                // Appearance
-                _sectionTitle('Appearance', theme),
-                const SizedBox(height: 8),
-                _buildAppearanceCard(theme, isDark),
+                      // Appearance
+                      _sectionTitle('Appearance', theme),
+                      const SizedBox(height: 8),
+                      _buildAppearanceCard(theme, isDark),
 
-                const SizedBox(height: 24),
+                      const SizedBox(height: 24),
 
-                // About
-                _sectionTitle('About', theme),
-                const SizedBox(height: 8),
-                _buildAboutCard(theme, isDark),
+                      // About
+                      _sectionTitle('About', theme),
+                      const SizedBox(height: 8),
+                      _buildAboutCard(theme, isDark),
 
-                const SizedBox(height: 24),
+                      const SizedBox(height: 24),
 
-                // Danger zone
-                _buildLogoutButton(theme),
+                      // Danger zone
+                      _buildLogoutButton(theme),
 
-                const SizedBox(height: 32),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
+                      const SizedBox(height: 32),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          );
   }
 
   // ── Header ─────────────────────────────────────────────────────────

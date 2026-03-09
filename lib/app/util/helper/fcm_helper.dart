@@ -110,7 +110,8 @@ class FcmHelper {
   static Future<void> _fcmBackgroundHandler(RemoteMessage message) async {
     if (message.data.isEmpty || message.data['title'] == null) return;
 
-    final image = message.data['image'];
+    final large_image = message.data['large_image'];
+    final big_image = message.data['big_image'];
 
     if (GetPlatform.isAndroid) {
       AwesomeNotificationsHelper.showNotification(
@@ -119,11 +120,11 @@ class FcmHelper {
         body: message.data['body'] ?? 'Body',
         payload: message.data.cast(),
         actionButtons: [],
-        notificationLayout: image != null
+        notificationLayout: large_image != null
             ? NotificationLayout.BigPicture
             : NotificationLayout.Default,
-        largeIcon: image,
-        bigPicture: image,
+        largeIcon: large_image,
+        bigPicture: big_image,
       );
     }
     //   if platform is ios
@@ -175,8 +176,10 @@ class FcmHelper {
       return;
     }
 
-    final image = message.data['image'];
-    print("🔥 image: $image");
+    final large_image = message.data['large_image'];
+    final big_image = message.data['big_image'];
+    print("🔥 large_image: $large_image");
+    print("🔥 big_image: $big_image");
 
     if (GetPlatform.isAndroid) {
       print("🔥 CALLING SHOW NOTIFICATION");
@@ -186,11 +189,11 @@ class FcmHelper {
         body: message.data['body'] ?? 'Body',
         payload: message.data.cast(),
         actionButtons: [],
-        notificationLayout: image != null
+        notificationLayout: large_image != null
             ? NotificationLayout.BigPicture
             : NotificationLayout.Default,
-        largeIcon: image,
-        bigPicture: image,
+        largeIcon: large_image,
+        bigPicture: big_image,
       );
     } else {
       print("🔥 NOT ANDROID - platform: ${GetPlatform.isIOS}");
@@ -201,7 +204,8 @@ class FcmHelper {
     // print("onMessageOpenApp message : ${message.data}");
     if (message.data.isEmpty || message.data['title'] == null) return;
 
-    final image = message.data['image'];
+    final large_image = message.data['large_image'];
+    final big_image = message.data['big_image'];
 
     if (GetPlatform.isAndroid) {
       AwesomeNotificationsHelper.showNotification(
@@ -209,11 +213,11 @@ class FcmHelper {
         title: message.data['title'] ?? 'Title',
         body: message.data['body'] ?? 'Body',
         payload: message.data.cast(),
-        notificationLayout: image != null
+        notificationLayout: large_image != null
             ? NotificationLayout.BigPicture
             : NotificationLayout.Default,
-        largeIcon: image,
-        bigPicture: image,
+        largeIcon: large_image,
+        bigPicture: big_image,
       );
     }
   }

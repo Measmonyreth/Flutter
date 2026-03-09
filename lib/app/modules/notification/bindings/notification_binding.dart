@@ -7,6 +7,7 @@ class NotificationBinding extends Bindings {
   void dependencies() {
     Get.lazyPut<NotificationController>(
       () => NotificationController(),
+      fenix: true,
     );
   }
 }

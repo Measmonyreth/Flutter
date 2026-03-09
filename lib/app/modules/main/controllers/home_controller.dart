@@ -3,6 +3,7 @@ import 'package:ecommerce_flutter/app/modules/cart/views/cart_view.dart';
 import 'package:ecommerce_flutter/app/modules/home/bindings/home_binding.dart';
 import 'package:ecommerce_flutter/app/modules/home/views/home_view.dart';
 import 'package:ecommerce_flutter/app/modules/notification/bindings/notification_binding.dart';
+import 'package:ecommerce_flutter/app/modules/notification/controllers/notification_controller.dart';
 import 'package:ecommerce_flutter/app/modules/notification/views/notification_view.dart';
 import 'package:ecommerce_flutter/app/modules/profile/bindings/profile_binding.dart';
 import 'package:ecommerce_flutter/app/modules/profile/views/profile_view.dart';
@@ -21,6 +22,15 @@ class MainController extends GetxController {
     Routes.PROFILE,
   ];
   var currentIndex = 0.obs;
+
+  final notificationController = Get.put(NotificationController());
+
+  @override
+  void onInit() {
+    // TODO: implement onInit
+    super.onInit();
+    notificationController.calculateNotificationCount();
+  }
 
   void onTab(index) {
     if (currentIndex == index) return;

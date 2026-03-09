@@ -1,7 +1,8 @@
 class NotificationGeneralResponse {
   List<Notifications>? notifications;
+  int? count;
 
-  NotificationGeneralResponse({this.notifications});
+  NotificationGeneralResponse({this.notifications, this.count});
 
   NotificationGeneralResponse.fromJson(Map<String, dynamic> json) {
     if (json['notifications'] != null) {
@@ -10,6 +11,7 @@ class NotificationGeneralResponse {
         notifications!.add(new Notifications.fromJson(v));
       });
     }
+    count = json['count'];
   }
 
   Map<String, dynamic> toJson() {
@@ -19,6 +21,7 @@ class NotificationGeneralResponse {
           .map((v) => v.toJson())
           .toList();
     }
+    data['count'] = this.count;
     return data;
   }
 }
@@ -27,8 +30,8 @@ class Notifications {
   int? id;
   String? title;
   String? body;
-  String? smallImage;
-  Null? largeImage;
+  String? largeImage;
+  String? bigImage;
   String? route;
   String? type;
   String? createdAt;
@@ -38,8 +41,8 @@ class Notifications {
     this.id,
     this.title,
     this.body,
-    this.smallImage,
     this.largeImage,
+    this.bigImage,
     this.route,
     this.type,
     this.createdAt,
@@ -50,8 +53,8 @@ class Notifications {
     id = json['id'];
     title = json['title'];
     body = json['body'];
-    smallImage = json['small_image'];
     largeImage = json['large_image'];
+    bigImage = json['big_image'];
     route = json['route'];
     type = json['type'];
     createdAt = json['created_at'];
@@ -63,8 +66,8 @@ class Notifications {
     data['id'] = this.id;
     data['title'] = this.title;
     data['body'] = this.body;
-    data['small_image'] = this.smallImage;
     data['large_image'] = this.largeImage;
+    data['big_image'] = this.bigImage;
     data['route'] = this.route;
     data['type'] = this.type;
     data['created_at'] = this.createdAt;

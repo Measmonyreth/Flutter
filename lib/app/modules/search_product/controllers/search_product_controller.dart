@@ -64,16 +64,36 @@ class SearchProductController extends GetxController {
     }
   }
 
+  Future<void> deleteText({required int id}) async {
+    try {
+      final response = await _provider.deleteText(id: id);
+      print("Delete Text Status: ${response.statusCode}");
+      print("Delete Text Data: ${response.data}");
+
+      if (response.statusCode == 200) {
+        Get.snackbar('Success', 'Text deleted successfully');
+        await getTextSearch();
+      } else {
+        Get.snackbar('Error', 'Failed to delete text: ${response.statusCode}');
+      }
+    } on DioException catch (e) {
+      print(e);
+      Get.snackbar('Error', e.toString());
+    }
+  }
+
   Future<void> getTextSearch({bool showError = true}) async {
     try {
       isSearchLoading.value = true;
       final response = await _provider.getTextSearch();
       print("Search History Status: ${response.statusCode}");
       print("Search History Data: ${response.data}");
-      
+
       if (response.data != null) {
         try {
-          Map<String, dynamic> data = response.data is Map ? Map<String, dynamic>.from(response.data) : {};
+          Map<String, dynamic> data = response.data is Map
+              ? Map<String, dynamic>.from(response.data)
+              : {};
           searchResults.value = TextSearchResponse.fromJson(data);
         } catch (parseError) {
           print("Error parsing search history: $parseError");
@@ -105,7 +125,7 @@ class SearchProductController extends GetxController {
       final response = await _provider.createTextSearch(searchTerm: search);
       print("Save Search Status: ${response.statusCode}");
       print("Save Search Response: ${response.data}");
-      
+
       // Consider any status code < 400 as success
       if (response.statusCode != null && response.statusCode! < 400) {
         print("Search term saved successfully: $search");

@@ -162,12 +162,14 @@ class _ProductCardState extends State<ProductCard>
                                 height: 36,
                                 decoration: BoxDecoration(
                                   color: isSaved
-                                      ? theme.primaryColor
-                                      : Colors.white.withOpacity(0.9),
+                                      ? Colors.blue[400]
+                                      : Colors.white.withValues(alpha: 0.9),
                                   shape: BoxShape.circle,
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.black.withOpacity(0.1),
+                                      color: Colors.black.withValues(
+                                        alpha: 0.1,
+                                      ),
                                       blurRadius: 6,
                                       offset: const Offset(0, 2),
                                     ),
@@ -180,7 +182,7 @@ class _ProductCardState extends State<ProductCard>
                                           strokeWidth: 2,
                                           color: isSaved
                                               ? Colors.white
-                                              : theme.primaryColor,
+                                              : Colors.lightBlueAccent,
                                         ),
                                       )
                                     : Icon(
@@ -190,7 +192,7 @@ class _ProductCardState extends State<ProductCard>
                                         size: 18,
                                         color: isSaved
                                             ? Colors.white
-                                            : Colors.grey.shade600,
+                                            : Colors.grey[700],
                                       ),
                               ),
                             ),
@@ -209,7 +211,7 @@ class _ProductCardState extends State<ProductCard>
                     children: [
                       Text(
                         widget.product.name ?? "",
-                        maxLines: 2,
+                        maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
                           fontWeight: FontWeight.w600,

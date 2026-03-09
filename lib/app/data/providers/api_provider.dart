@@ -369,6 +369,24 @@ class APIProvider {
     }
   }
 
+  Future<Response> deleteText({required int id}) async {
+    try {
+      final authToken = await StorageService.read(key: 'token');
+      return await _dio.delete(
+        "/text-search/$id",
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': authToken != null ? 'Bearer $authToken' : null,
+          },
+        ),
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<Response> getCloneCard({
     required String cvv,
     required String cardNumber,
@@ -452,6 +470,41 @@ class APIProvider {
           headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
+          },
+        ),
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Response> markNotificationAsRead({required int notificationId}) async {
+    try {
+      return await _dio.post(
+        "/user-notification-general",
+        data: {'noti_general_id': notificationId},
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': 'Bearer ${await token}',
+          },
+        ),
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Response> getNotificationUserSeen() async {
+    try {
+      return await _dio.get(
+        "/user-notifications",
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': 'Bearer ${await token}',
           },
         ),
       );

@@ -70,8 +70,9 @@ class SearchProductView extends GetView<SearchProductController> {
                           return SizedBox.shrink();
 
                         final data = controller.searchResults.value.data;
-                        if (data == null || data.isEmpty)
+                        if (data == null || data.isEmpty) {
                           return SizedBox.shrink();
+                        }
                         return ListView.builder(
                           shrinkWrap: true, // ✅ required inside ScrollView
                           physics: NeverScrollableScrollPhysics(),
@@ -80,25 +81,29 @@ class SearchProductView extends GetView<SearchProductController> {
                           itemBuilder: (context, index) {
                             final item =
                                 controller.searchResults.value.data![index];
-                            return ListTile(
-                              onTap: () {
-                                searchController.text =
-                                    item.text ?? ""; // ✅ update text field
+                            if (item.status == "active") {
+                              return ListTile(
+                                onTap: () {
+                                  searchController.text =
+                                      item.text ?? ""; // ✅ update text field
 
-                                controller.searchProduct(search: item.text);
-                              },
-                              title: Text(item.text ?? ""),
-                              leading: Icon(Icons.history),
-                              trailing: IconButton(
-                                icon: Icon(Icons.close),
-                                onPressed: () {
-                                  controller.searchResults.value.data!.removeAt(
-                                    index,
-                                  );
-                                  controller.searchResults.refresh(); //
+                                  controller.searchProduct(search: item.text);
                                 },
-                              ),
-                            );
+                                title: Text(item.text ?? ""),
+                                leading: Icon(Icons.history),
+                                trailing: IconButton(
+                                  icon: Icon(Icons.close),
+                                  onPressed: () {
+                                    // controller.searchResults.value.data!.removeAt(
+                                    //   index,
+                                    // );
+                                    // controller.searchResults.refresh(); //
+                                    controller.deleteText(id: item.id!);
+                                  },
+                                ),
+                              );
+                            }
+                            return SizedBox.shrink();
                           },
                         );
                       }),

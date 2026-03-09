@@ -47,38 +47,65 @@ class SavedProductsView extends StatelessWidget {
           itemBuilder: (context, index) {
             final product = products![index];
             final isSaved = homecontroller.savedStatusMap[product.id] ?? false;
-            return Slidable(
-              key: ValueKey(product.id),
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Slidable(
+                key: ValueKey(product.id),
 
-              // ✅ End slide (right → left) = Unsave
-              endActionPane: ActionPane(
-                motion: const ScrollMotion(),
-                extentRatio: 0.25,
-                children: [
-                  SlidableAction(
-                    onPressed: (_) async {
-                      await homecontroller.toggleSaveProduct(
-                        productId: product.id!,
-                        currentlySaved: isSaved,
-                      );
-                      controller.savedProductsList.value.removeWhere(
-                        (p) => p.id == product.id,
-                      );
-                      controller.savedProductsList.refresh();
-                    },
-                    backgroundColor: Colors.red.shade400,
-                    foregroundColor: Colors.white,
-                    icon: Icons.favorite_border,
-                    label: 'Unsave',
-                  ),
-                ],
-              ),
-
-              child: GestureDetector(
-                onTap: () => Get.to(
-                  () => ProductDetailView(product: product),
-                  binding: HomeBinding(),
+                // ✅ End slide (right → left) = Unsave
+                endActionPane: ActionPane(
+                  motion: const BehindMotion(),
+                  extentRatio: 0.25,
+                  children: [
+                    CustomSlidableAction(
+                      onPressed: (context) {
+                        homecontroller.toggleSaveProduct(
+                          productId: product.id!,
+                          currentlySaved: isSaved,
+                        );
+                        controller.savedProductsList.value.removeWhere(
+                          (p) => p.id == product.id,
+                        );
+                        controller.savedProductsList.refresh();
+                      },
+                      backgroundColor: Colors.transparent,
+                      padding: EdgeInsets.zero,
+                      child: Container(
+                        margin: const EdgeInsets.only(
+                          left: 8,
+                          bottom: 12,
+                          //top: 8,
+                        ), // ← gap from card
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFF3B30),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        width: double.infinity,
+                        height: double.infinity, // ← matches card height
+                        child: const Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.delete_outline_rounded,
+                              color: Colors.white,
+                              size: 22,
+                            ),
+                            SizedBox(height: 4),
+                            Text(
+                              'Unsaved',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
+
                 child: CartProductCard(product: product),
               ),
             );

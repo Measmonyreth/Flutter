@@ -77,7 +77,10 @@ class EditProfileController extends GetxController {
           ),
         );
       } else {
-        Get.snackbar("Update Profile", "You have update profile failed");
+        Get.snackbar(
+          "Update Profile",
+          "You have update profile failed ${response.statusCode}",
+        );
       }
       print("=== UPDATE PROFILE RESPONSE ===");
       print(response.statusCode);

@@ -2,17 +2,18 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:ecommerce_flutter/app/constant/constant.dart';
 import 'package:ecommerce_flutter/app/data/model/product.rest.model.dart';
 import 'package:ecommerce_flutter/app/modules/home/controllers/home_controller.dart';
+import 'package:ecommerce_flutter/app/modules/product-detail/views/product_detail_view.dart';
+import 'package:ecommerce_flutter/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class CarouselHeader extends StatelessWidget {
-  const CarouselHeader({super.key, required this.controller});
+  const CarouselHeader({super.key, required this.featured});
 
-  final HomeController controller;
+  final List<FeaturedProducts> featured;
 
   @override
   Widget build(BuildContext context) {
-    final featured = controller.products.value.featuredProducts!;
     final theme = Theme.of(context);
 
     return ClipRRect(
@@ -48,7 +49,7 @@ class CarouselHeader extends StatelessWidget {
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
+                      horizontal: 24,
                       vertical: 16,
                     ),
                     child: Column(
@@ -82,23 +83,25 @@ class CarouselHeader extends StatelessWidget {
                         // Product Name
                         Text(
                           banner.name ?? "",
-                          style: theme.textTheme.titleLarge?.copyWith(
+                          style: theme.textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.bold,
-                            height: 1.3,
+                            height: 1,
                           ),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
 
-                        const SizedBox(height: 4),
+                        const SizedBox(height: 3),
 
                         // Description
                         Text(
+                          // max 2 lines
                           banner.description ?? "",
                           style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.textTheme.bodySmall?.color
-                                ?.withOpacity(0.7),
-                            height: 1.3,
+                            color: theme.textTheme.bodySmall?.color?.withValues(
+                              alpha: 0.7,
+                            ),
+                            height: 1.2,
                           ),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
@@ -106,7 +109,7 @@ class CarouselHeader extends StatelessWidget {
 
                         // Price (if available)
                         if (banner.price != null) ...[
-                          const SizedBox(height: 6),
+                          const SizedBox(height: 3),
                           Text(
                             '\$${banner.price}',
                             style: theme.textTheme.titleSmall?.copyWith(
@@ -116,7 +119,7 @@ class CarouselHeader extends StatelessWidget {
                           ),
                         ],
 
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 3),
 
                         // Shop Now Button
                         SizedBox(
@@ -140,11 +143,9 @@ class CarouselHeader extends StatelessWidget {
                                 name: f.name,
                                 description: f.description,
                                 price: f.price,
+                                image: f.image,
                               );
-                              Get.toNamed(
-                                '/product-detail',
-                                arguments: product,
-                              );
+                              Get.to(() => ProductDetailView(product: product));
                             },
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
@@ -176,21 +177,32 @@ class CarouselHeader extends StatelessWidget {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(16),
                         child: Image.network(
-                          "${banner.image}",
+                          banner.image ?? '',
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return Center(child: CircularProgressIndicator());
+                          },
                           fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) =>
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: theme.colorScheme.surfaceVariant,
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                                child: Icon(
-                                  Icons.image_not_supported_outlined,
-                                  size: 40,
-                                  color: theme.colorScheme.onSurfaceVariant
-                                      .withOpacity(0.4),
-                                ),
+                          errorBuilder: (context, error, stackTrace) {
+                            print(
+                              "Image error: $error",
+                            ); // ✅ Check what error is
+                            print(
+                              "Image URL: ${urlImg}${banner.image ?? ''}",
+                            ); // ✅ Check URL
+                            return Container(
+                              decoration: BoxDecoration(
+                                color: theme.colorScheme.surfaceVariant,
+                                borderRadius: BorderRadius.circular(16),
                               ),
+                              child: Icon(
+                                Icons.image_not_supported_outlined,
+                                size: 40,
+                                color: theme.colorScheme.onSurfaceVariant
+                                    .withOpacity(0.4),
+                              ),
+                            );
+                          },
                         ),
                       ),
                     ),

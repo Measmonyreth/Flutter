@@ -39,13 +39,15 @@ class Product {
 class Categories {
   int? id;
   String? name;
+  String? image;
   List<Products>? products;
 
-  Categories({this.id, this.name, this.products});
+  Categories({this.id, this.name, this.image, this.products});
 
   Categories.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
+    image = json['image'];
     if (json['products'] != null) {
       products = <Products>[];
       json['products'].forEach((v) {
@@ -58,6 +60,7 @@ class Categories {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
     data['name'] = this.name;
+    data['image'] = this.image;
     if (this.products != null) {
       data['products'] = this.products!.map((v) => v.toJson()).toList();
     }

@@ -126,15 +126,20 @@ class CheckoutView extends GetView<CheckoutController> {
 
                 // MasterCard
                 GestureDetector(
-                  onTap: () {
+                  onTap: () async {
                     _selectedCard.value = 0;
-                    controller.getCard(
-                      cvv: cvvController.text,
-                      cardNumber: cardNumberController.text,
-                      cardHolderName: cardHolderController.text,
-                      expirationDate: expirationDateController.text,
-                      type: "master_card",
-                    );
+                    if (cardNumberController.text.isNotEmpty &&
+                        cvvController.text.isNotEmpty &&
+                        cardHolderController.text.isNotEmpty &&
+                        expirationDateController.text.isNotEmpty) {
+                      await controller.getCard(
+                        cvv: cvvController.text,
+                        cardNumber: cardNumberController.text,
+                        cardHolderName: cardHolderController.text,
+                        expirationDate: expirationDateController.text,
+                        type: "master_card",
+                      );
+                    }
                   },
                   child: Container(
                     margin: const EdgeInsets.only(bottom: 12),
@@ -285,15 +290,20 @@ class CheckoutView extends GetView<CheckoutController> {
                   Container(), // empty container when VISA is selected
                 // VISA
                 GestureDetector(
-                  onTap: () {
+                  onTap: () async {
                     _selectedCard.value = 1;
-                    controller.getCard(
-                      cvv: cvvController.text,
-                      cardNumber: cardNumberController.text,
-                      cardHolderName: cardHolderController.text,
-                      expirationDate: expirationDateController.text,
-                      type: "visa",
-                    );
+                    if (cardNumberController.text.isNotEmpty &&
+                        cvvController.text.isNotEmpty &&
+                        cardHolderController.text.isNotEmpty &&
+                        expirationDateController.text.isNotEmpty) {
+                      await controller.getCard(
+                        cvv: cvvController.text,
+                        cardNumber: cardNumberController.text,
+                        cardHolderName: cardHolderController.text,
+                        expirationDate: expirationDateController.text,
+                        type: "visa",
+                      );
+                    }
                   },
                   child: Container(
                     margin: const EdgeInsets.only(bottom: 12),

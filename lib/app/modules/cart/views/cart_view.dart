@@ -1,6 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ecommerce_flutter/app/data/model/cart.rest.model.dart';
+import 'package:ecommerce_flutter/app/data/model/product.rest.model.dart';
 import 'package:ecommerce_flutter/app/modules/cart/controllers/cart_controller.dart';
+import 'package:ecommerce_flutter/app/modules/product-detail/views/product_detail_view.dart';
 import 'package:ecommerce_flutter/app/modules/widget/qtybutton.dart';
 import 'package:ecommerce_flutter/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
@@ -79,32 +81,81 @@ class CartView extends GetView<CartController> {
 
           return Stack(
             children: [
+              Container(color: const Color(0xFFF5F5F7)),
+
               // ── Cart Items List ──────────────────────────
               ListView.builder(
                 padding: const EdgeInsets.fromLTRB(16, 16, 16, 140),
                 itemCount: items.length,
                 itemBuilder: (context, index) {
                   final item = items[index];
-                  return Slidable(
-                    child: _CartItemCard(
-                      item: item,
-                      theme: theme,
-                      controller: controller,
-                    ),
-                    endActionPane: ActionPane(
-                      motion: const ScrollMotion(),
-                      children: [
-                        SlidableAction(
-                          onPressed: (context) {
-                            controller.removeFromCart(
-                              productId: item.product?.id ?? 0,
-                            );
-                          },
-                          backgroundColor: Colors.red,
-                          foregroundColor: Colors.white,
-                          icon: Icons.delete,
-                        ),
-                      ],
+                  return GestureDetector(
+                    onTap: () {
+                      if (item.product != null) {
+                        final products = Products(
+                          id: item.product!.id,
+                          name: item.product!.name,
+                          description: item.product!.description,
+                          price: item.product!.price?.toString(),
+                          image: item.product!.image,
+                        );
+                        Get.to(() => ProductDetailView(product: products));
+                      }
+                    },
+                    child: Slidable(
+                      child: _CartItemCard(
+                        carts: controller.cart.value.carts?.items ?? [],
+                        item: item,
+                        theme: theme,
+                        controller: controller,
+                      ),
+                      endActionPane: ActionPane(
+                        motion: const BehindMotion(),
+                        extentRatio: 0.25,
+                        children: [
+                          CustomSlidableAction(
+                            onPressed: (context) {
+                              controller.removeFromCart(
+                                productId: item.product?.id ?? 0,
+                              );
+                            },
+                            backgroundColor: Colors.transparent,
+                            padding: EdgeInsets.zero,
+                            child: Container(
+                              margin: const EdgeInsets.only(
+                                left: 8,
+                                bottom: 12,
+                                //top: 8,
+                              ), // ← gap from card
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFFF3B30),
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              width: double.infinity,
+                              height: double.infinity, // ← matches card height
+                              child: const Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.delete_outline_rounded,
+                                    color: Colors.white,
+                                    size: 22,
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    'Remove',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 },
@@ -128,11 +179,13 @@ class CartView extends GetView<CartController> {
 // ── Cart Item Card ───────────────────────────────────────────
 class _CartItemCard extends StatelessWidget {
   _CartItemCard({
+    required this.carts,
     required this.item,
     required this.theme,
     required this.controller,
   });
 
+  final List<Items> carts;
   final Items item;
   final ThemeData theme;
   final CartController controller;
@@ -193,47 +246,57 @@ class _CartItemCard extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            product?.name ?? '',
-                            style: const TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w700,
-                              color: Color(0xFF1A1A1A),
+                      Expanded(
+                        flex: 5,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              product?.name ?? '',
+                              style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
+                                color: Color(0xFF1A1A1A),
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            product?.description ?? '',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey.shade500,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
+                            const SizedBox(height: 4),
+                            // handle text
+                            if (product?.description != null &&
+                                product!.description!.isNotEmpty)
+                              Text(
+                                product!.description!,
+                                maxLines: 2,
+                                //  overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey.shade500,
+                                ),
+                              ),
+                            const SizedBox(height: 4),
+                          ],
+                        ),
                       ),
                       const Spacer(),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: theme.primaryColor.withOpacity(0.08),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Text(
-                          'x${item.quantity}',
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w700,
-                            color: theme.primaryColor,
+                      Expanded(
+                        flex: 1,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: theme.primaryColor.withOpacity(0.08),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            'x${item.quantity}',
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w700,
+                              color: theme.primaryColor,
+                            ),
                           ),
                         ),
                       ),
@@ -245,7 +308,7 @@ class _CartItemCard extends StatelessWidget {
                     children: [
                       // Unit price
                       Text(
-                        '\$${double.tryParse(item.price.toString())?.toStringAsFixed(2)}',
+                        '\$${double.tryParse(item.price.toString())?.toStringAsFixed(2) ?? '0.00'}',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -274,6 +337,7 @@ class _CartItemCard extends StatelessWidget {
                               style: const TextStyle(
                                 fontSize: 17,
                                 fontWeight: FontWeight.bold,
+                                color: Colors.black,
                               ),
                             ),
                           ),
@@ -338,7 +402,7 @@ class _CheckoutBar extends StatelessWidget {
                 ),
               ),
               Obx(() {
-                final total = controller.cart.value.total ?? '0.00';
+                final total = controller.cart.value.carts?.total ?? '0.00';
                 return Text(
                   '\$${double.tryParse(total.toString())?.toStringAsFixed(2)}',
                   style: const TextStyle(

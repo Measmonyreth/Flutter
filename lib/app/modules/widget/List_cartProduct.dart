@@ -30,7 +30,17 @@ class CartProductCard extends StatelessWidget {
         child: GestureDetector(
           onTap: () {
             // Navigate to product detail view
-            Get.to(() => ProductDetailView(product: product));
+            Get.to(
+              () => ProductDetailView(
+                product: Products(
+                  id: product.id,
+                  name: product.name,
+                  description: product.description,
+                  price: product.price,
+                  image: '${urlImg}${product.image}',
+                ),
+              ),
+            );
           },
           child: Row(
             children: [
@@ -70,13 +80,17 @@ class CartProductCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 4),
-                    Text(
-                      product.description ?? "",
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: Colors.grey.shade500,
+                    SizedBox(
+                      width: double.infinity,
+                      height: 20,
+                      child: Text(
+                        product.description ?? "",
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.grey.shade500,
+                        ),
                       ),
                     ),
                     const SizedBox(height: 8),

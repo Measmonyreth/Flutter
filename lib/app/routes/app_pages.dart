@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
 import '../modules/address/add_address/bindings/add_address_binding.dart';
@@ -105,7 +106,7 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.NOTIFICATIONS,
-      page: () => const NotificationView(),
+      page: () => NotificationView(),
       binding: NotificationBinding(),
     ),
   ];

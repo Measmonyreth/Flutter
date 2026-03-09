@@ -450,7 +450,7 @@ class _ProductDetailViewState extends State<ProductDetailView>
                                 controller.addtoCart(
                                   productId: widget.product.id!,
                                   quantity: _quantity,
-                                  price: _totalPrice,
+                                  price: double.parse(widget.product.price!),
                                 );
                               },
                         child: AnimatedContainer(

@@ -1,7 +1,8 @@
 class NotificationSeenUnseenResponse {
   List<Notifications>? notifications;
+  int? count;
 
-  NotificationSeenUnseenResponse({this.notifications});
+  NotificationSeenUnseenResponse({this.notifications, this.count});
 
   NotificationSeenUnseenResponse.fromJson(Map<String, dynamic> json) {
     if (json['notifications'] != null) {
@@ -10,6 +11,7 @@ class NotificationSeenUnseenResponse {
         notifications!.add(new Notifications.fromJson(v));
       });
     }
+    count = json['count'];
   }
 
   Map<String, dynamic> toJson() {
@@ -19,6 +21,7 @@ class NotificationSeenUnseenResponse {
           .map((v) => v.toJson())
           .toList();
     }
+    data['count'] = this.count;
     return data;
   }
 }

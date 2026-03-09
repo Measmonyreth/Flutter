@@ -12,7 +12,7 @@ class HomeController extends GetxController {
 
   RxBool isLoading = true.obs;
   Rx<Product> products = Product().obs;
-  var categories = <Data>[].obs;
+  Rx<CategoryResponse> categories = CategoryResponse().obs;
   RxList<Products> productsByCategory = <Products>[].obs;
   RxList<SavedProducts> savedProductsList = <SavedProducts>[].obs;
   RxMap<int, bool> savedStatusMap = <int, bool>{}.obs;
@@ -163,8 +163,8 @@ class HomeController extends GetxController {
       isLoading.value = true;
       final response = await _apiProvider.getCategories();
       if (response.statusCode == 200) {
-        List<dynamic> data = response.data['data'];
-        categories.value = data.map((json) => Data.fromJson(json)).toList();
+        Map<String, dynamic> data = response.data;
+        categories.value = CategoryResponse.fromJson(data);
       } else {
         Get.defaultDialog(
           title: "Error",
